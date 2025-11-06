@@ -1,89 +1,57 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-const port = 3000;
 
-let users = [];
+var corsOptions = {
+  origin: "*",
+};
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors(corsOptions));
 
-app.post("/login", (req, res) => {
-  res.status(200).json({
-    data: {
-      user: {
-        username: "test",
-        name: "Test User",
-      },
-      token: "kiuwesdfsfsfsfswnsdisduiewnewj",
-    },
-    message: "User fetched successfully",
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+// app.use(function (req, res, next) {
+
+//   // Website you to allow to connect
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+
+//   // Request methods 
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+//   // Request headers you wish to allow
+//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+//   res.setHeader('Access-Control-Allow-Credentials', true);
+//   res.setHeader('Content-Type', "multipart/form-data");
+  
+//   // Pass to next layer of middleware
+//   next();
+// });
+const db = require("./app/models");
+db.mongoose
+  .connect(db.url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to the database!");
+  })
+  .catch((err) => {
+    console.log("Cannot connect to the database!", err);
+    process.exit();
   });
+
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to our application." });
 });
 
-app.get("/allUsers", (req, res) => {
-  res.status(200).json({
-    data: users,
-    message: "Users fetched successfully",
-  });
-});
-
-app.post("/createUser", (req, res) => {
-  const {  email, username ,jobRole} = req.body;
-
-  if (!email || !username|| !jobRole) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
-  const newUser = {
-    id: users.length + 1,
-    email,
-    username,
-    jobRole
-  };
-
-  users.push(newUser);
-  res.status(201).json({
-    data: newUser,
-    message: "User created successfully",
-  });
-});
-
-app.patch("/updateUser/:id", (req, res) => {
-  const userId = parseInt(req.params.id);
-  const {  email ,jobRole } = req.body;
-
-  const userIndex = users.findIndex((u) => u.id === userId);
-  if (userIndex === -1) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  users[userIndex] = {
-    ...users[userIndex],
-    email: email || users[userIndex].email,
-    username:  users[userIndex].username,
-    jobRole:jobRole
-  };
-
-  res.status(200).json({
-    data: users[userIndex],
-    message: "User updated successfully",
-  });
-});
-
-app.delete("/deleteUser/:id", (req, res) => {
-  const userId = parseInt(req.params.id);
-  const userIndex = users.findIndex((u) => u.id === userId);
-
-  if (userIndex === -1) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  users.splice(userIndex, 1);
-  res.status(200).json({ data: true, message: "User deleted successfully" });
-});
-
-app.listen(port, () => {
-  console.log(` Server running at http://localhost:${port}`);
+require("./app/routes/user.routes")(app);
+require("./app/routes/appointments.routes")(app);
+// set port, listen for requests
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
 });
