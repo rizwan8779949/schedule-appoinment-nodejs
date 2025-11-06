@@ -1,15 +1,29 @@
 module.exports = (mongoose) => {
   var schema = mongoose.Schema({
+    appointmentID: {
+      type: String,
+      required: true,
+    },
     patientName: {
       type: String,
       required: true,
     },
     patientEmail: {
       type: String,
+    },
+    patientContact: {
+      type: String,
       required: true,
     },
     doctorName: {
       type: String,
+    },
+    prescription: {
+      type: String,
+    },
+    disease: {
+      type: String,
+      require: true,
     },
     doctorEmail: {
       type: String,
@@ -21,16 +35,9 @@ module.exports = (mongoose) => {
       type: Date,
       required: true,
     },
-    appointmentTime: {
-      type: String, // or you can store as Date if storing full datetime
-      required: true,
-    },
-    reason: {
-      type: String,
-    },
     status: {
       type: String,
-      enum: ["Pending","Scheduled", "Completed", "Cancelled"],
+      enum: ["Pending", "Scheduled", "Completed", "Cancelled"],
       default: "Pending",
     },
     createdAt: {
