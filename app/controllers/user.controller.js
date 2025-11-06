@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    if (!username || !password) {
+   if (!username || !password) {
       return res.status(400).json({ message: "Username or password cannot be empty!" });
     }
 
@@ -76,6 +76,6 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ message: err.message ?? "Server error" });
   }
 };
