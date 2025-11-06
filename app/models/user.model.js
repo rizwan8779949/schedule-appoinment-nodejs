@@ -15,6 +15,13 @@ module.exports = (mongoose) => {
       required: true,
       trim: true,
     },
+    //  userType:{
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    //   enum: ["User","Admin"],
+    //   default: "User",
+    // },
   });
 
   const user = mongoose.model("user", schema);
