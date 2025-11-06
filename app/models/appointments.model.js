@@ -1,22 +1,47 @@
 module.exports = (mongoose) => {
   var schema = mongoose.Schema({
-    projectId: {
+    patientName: {
       type: String,
       required: true,
-      trim: true,
     },
-    surveyId: {
+    patientEmail: {
       type: String,
       required: true,
-      trim: true,
     },
-    status:{
+    doctorName: {
       type: String,
+    },
+    doctorEmail: {
+      type: String,
+    },
+    doctorContact: {
+      type: String,
+    },
+    appointmentDate: {
+      type: Date,
       required: true,
-      trim: true,
+    },
+    appointmentTime: {
+      type: String, // or you can store as Date if storing full datetime
+      required: true,
+    },
+    reason: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["Pending","Scheduled", "Completed", "Cancelled"],
+      default: "Pending",
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
     },
   });
 
-  const survey = mongoose.model("survey", schema);
-  return survey;
+  const appointments = mongoose.model("Appointments", schema);
+  return appointments;
 };

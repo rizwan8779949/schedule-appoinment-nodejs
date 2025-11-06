@@ -2,61 +2,65 @@ const db = require("../models");
 const Appointments = db.appointments;
 const mongoose = require("mongoose");
 
-//  create a new appointments
+// Create a new appointment
 exports.create = async (req, res) => {
-  // validation
-  if (!req?.body?.projectId || !req?.body?.surveyId || !req?.body?.status) {
-    res
-      .status(400)
-      .send({ message: "projectId or surveyId or status missing" });
-    return false;
-  }
-  const surveyData = {
-    projectId: req?.body?.projectId,
-    surveyId: req?.body?.surveyId,
-    status: req?.body?.status,
-  };
-  const surveyExist = await Survey.findOne({
-    projectId: req?.body?.projectId,
-    surveyId: req?.body?.surveyId,
-  });
+  try {
+    // validation
+    const {
+      patientName,
+      patientEmail,
+      appointmentDate,
+      appointmentTime,
+      reason,
+    } = req.body;
+    if (!patientName || !patientEmail || !appointmentDate || !appointmentTime) {
+      return res.status(400).send({ message: "Required fields are missing" });
+    }
 
-  if (surveyExist) {
-    res.status(409).send({
-      message: "appointments alreay exist",
+    const appointmentExist = await Appointments.findOne({
+      patientName,
+      patientEmail,
+      appointmentDate,
+      appointmentTime,
     });
-    return;
+
+    if (appointmentExist) {
+      return res
+        .status(409)
+        .send({ message: "Appointment already exists at this time" });
+    }
+
+    const newAppointment = new Appointments({
+      patientName,
+      patientEmail,
+      doctorName,
+      doctorId,
+      appointmentDate,
+      appointmentTime,
+      reason,
+    });
+
+    const savedAppointment = await newAppointment.save();
+    res.status(201).send(savedAppointment);
+  } catch (err) {
+    console.error("Error creating appointment:", err);
+    res.status(500).send({ message: err.message });
   }
-  var survey = new Appointments(surveyData);
-  survey
-    .save()
-    .then(async (data) => {
-      res.status(200).send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message,
-      });
-    });
 };
 
-// Retrieve all appointments from the database.
+// Retrieve all appointments
 exports.getAllAppointments = async (req, res) => {
   try {
-    // const { status, projectId } = req.query;
- 
+    const appointmentsList = await Appointments.find();
+    const counts = appointmentsList.length;
 
-    const surveysList = await Appointments.findAll();
     res.status(200).send({
-      message: "Appointments found successfully..!",
-      data: surveysList,
-      counts: counts,
+      message: "Appointments found successfully",
+      data: appointmentsList,
+      counts,
     });
   } catch (error) {
     console.error("Error in get appointments:", error);
-    return res.status(500).send({
-      message: error.message,
-    });
+    res.status(500).send({ message: error.message });
   }
 };
-
