@@ -7,6 +7,9 @@ module.exports = (app) => {
 
   router.get("/getAllAppointments", appointmentsController.getAllAppointments);
 
+  router.post("/scheduleAppointment", appointmentsController.scheduleAppointment);
+
+  router.get("/getAppointmentByID", appointmentsController.getAppointmentByID);
 
 
   app.use("/api/appointments", router);

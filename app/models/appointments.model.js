@@ -1,41 +1,52 @@
 module.exports = (mongoose) => {
-  var schema = mongoose.Schema({
-    appointmentId: {
-      type: String,
-      required: true,
+  var schema = mongoose.Schema(
+    {
+      appointmentId: {
+        type: String,
+        required: true,
+        unique: true,
+      },
+      patientName: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      patientContact: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      prescription: {
+        type: String,
+        default: "",
+      },
+      disease: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      appointmentDate: {
+        type: Date,
+        required: true,
+      },
+      appointmentDepartment: {
+        type: String,
+      },
+      doctorId: {
+        type: mongoose.Schema.Types.ObjectId, // should be ObjectId
+        ref: "doctor", // capitalize model name reference
+        required: false,
+      },
+      status: {
+        type: String,
+        enum: ["Pending", "Scheduled", "Completed", "Cancelled"],
+        default: "Pending",
+      },
     },
-    patientName: {
-      type: String,
-      required: true,
-    },
-    patientContact: {
-      type: String,
-      required: true,
-    },
-    prescription: {
-      type: String,
-    },
-    disease: {
-      type: String,
-      require: true,
-    },
-    appointmentDate: {
-      type: Date,
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: ["Pending", "Scheduled", "Completed", "Cancelled"],
-      default: "Pending",
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-    },
-  });
+    {
+      timestamps: true, // automatically manages createdAt and updatedAt
+    }
+  );
 
   const appointments = mongoose.model("Appointments", schema);
   return appointments;
