@@ -1,6 +1,6 @@
 module.exports = (mongoose) => {
   var schema = mongoose.Schema({
-    appointmentID: {
+    appointmentId: {
       type: String,
       required: true,
     },
@@ -8,15 +8,9 @@ module.exports = (mongoose) => {
       type: String,
       required: true,
     },
-    patientEmail: {
-      type: String,
-    },
     patientContact: {
       type: String,
       required: true,
-    },
-    doctorName: {
-      type: String,
     },
     prescription: {
       type: String,
@@ -24,12 +18,6 @@ module.exports = (mongoose) => {
     disease: {
       type: String,
       require: true,
-    },
-    doctorEmail: {
-      type: String,
-    },
-    doctorContact: {
-      type: String,
     },
     appointmentDate: {
       type: Date,

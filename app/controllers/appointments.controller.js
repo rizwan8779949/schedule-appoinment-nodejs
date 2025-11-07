@@ -5,48 +5,56 @@ const mongoose = require("mongoose");
 // Create a new appointment
 exports.create = async (req, res) => {
   try {
-    // validation
-    const {
-      patientName,
-      patientEmail,
-      appointmentDate,
-      appointmentTime,
-      reason,
-    } = req.body;
-    if (!patientName || !patientEmail || !appointmentDate || !appointmentTime) {
+    const { patientName, patientContact, appointmentDate, disease } = req.body;
+
+    // Validation
+    if (!patientName || !patientContact || !appointmentDate || !disease) {
       return res.status(400).send({ message: "Required fields are missing" });
     }
 
+    // Check if appointment already exists for same date/contact
     const appointmentExist = await Appointments.findOne({
       patientName,
-      patientEmail,
+      patientContact,
       appointmentDate,
-      appointmentTime,
     });
 
     if (appointmentExist) {
       return res
         .status(409)
-        .send({ message: "Appointment already exists at this time" });
+        .send({ message: "Appointment already exists at this date" });
+    }
+
+    let appointmentId;
+    let isUnique = false;
+
+    while (!isUnique) {
+      appointmentId = 'APN'+Math.floor(100000 + Math.random() * 900000);
+      // Check if it already exists
+      const existingId = await Appointments.findOne({ appointmentId });
+      if (!existingId) isUnique = true;
     }
 
     const newAppointment = new Appointments({
+      appointmentId,
       patientName,
-      patientEmail,
-      doctorName,
-      doctorId,
+      patientContact,
       appointmentDate,
-      appointmentTime,
-      reason,
+      disease,
     });
 
     const savedAppointment = await newAppointment.save();
-    res.status(201).send(savedAppointment);
+
+    res.status(201).json({
+      message: "Appointment saved successfully",
+      data: savedAppointment,
+    });
   } catch (err) {
     console.error("Error creating appointment:", err);
     res.status(500).send({ message: err.message });
   }
 };
+
 
 // Retrieve all appointments
 exports.getAllAppointments = async (req, res) => {

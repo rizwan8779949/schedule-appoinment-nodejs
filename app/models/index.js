@@ -8,5 +8,6 @@ db.mongoose = mongoose;
 db.url = dbConfig.databaseUrl;
 db.user = require("./user.model.js")(mongoose);
 db.appointments = require("./appointments.model.js")(mongoose);
-
+db.doctor = require("./doctor.model.js")(mongoose);
+  
 module.exports = db;
