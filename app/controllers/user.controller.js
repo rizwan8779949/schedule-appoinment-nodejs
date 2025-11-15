@@ -79,3 +79,17 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: err.message ?? "Server error" });
   }
 };
+
+// Retrieve all users
+exports.getAllUser = async (req, res) => {
+  try {
+    const usersList = await User.find();
+    res.status(200).send({
+      message: "Users found successfully",
+      data: usersList,
+    });
+  } catch (error) {
+    console.error("Error in get users:", error);
+    res.status(500).send({ message: error.message });
+  }
+};

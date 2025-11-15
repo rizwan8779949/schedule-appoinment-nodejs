@@ -8,6 +8,8 @@ module.exports = app => {
   //  login user
   router.post("/login", userController.login);
 
+  //  getAll user
+  router.get("/getAllUser", userController.getAllUser);
  
 
 
